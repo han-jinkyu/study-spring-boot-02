@@ -3,6 +3,7 @@ package com.example.demo.web;
 import com.example.demo.domains.posts.PostsRepository;
 import com.example.demo.dto.posts.PostsSaveRequestDto;
 
+import com.example.demo.service.PostsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,9 +19,9 @@ import lombok.AllArgsConstructor;
 public class WebRestController {
 
     /**
-     * Posts 관련 레포지터리
+     * PostsService
      */
-    private PostsRepository postsRepository;
+    private PostsService postsService;
 
     /**
      * 헬로 월드 표시하기
@@ -37,6 +38,6 @@ public class WebRestController {
      */
     @PostMapping(value = "/posts")
     public void savePosts(@RequestBody PostsSaveRequestDto dto) {
-        postsRepository.save(dto.toEntity());
+        postsService.save(dto);
     }
 }
