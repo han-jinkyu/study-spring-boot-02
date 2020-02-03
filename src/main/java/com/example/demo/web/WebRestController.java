@@ -31,6 +31,10 @@ public class WebRestController {
         return "Hello World!";
     }
 
+    /**
+     * Posts DTO를 저장한다
+     * @param dto 저장할 Posts DTO
+     */
     @PostMapping(value = "/posts")
     public void savePosts(@RequestBody PostsSaveRequestDto dto) {
         postsRepository.save(dto.toEntity());
