@@ -2,6 +2,7 @@ package com.example.demo.dto.posts;
 
 import com.example.demo.domains.posts.Posts;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,6 +19,19 @@ public class PostsSaveRequestDto {
     private String title;
     private String content;
     private String author;
+
+    /**
+     * Constructor
+     * @param title 제목
+     * @param content 본문
+     * @param author 글쓴이
+     */
+    @Builder
+    public PostsSaveRequestDto(String title, String content, String author) {
+        this.title = title;
+        this.content = content;
+        this.author = author;
+    }
 
     /**
      * Entity로 변경한다
