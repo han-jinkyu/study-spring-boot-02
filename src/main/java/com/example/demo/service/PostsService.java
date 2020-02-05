@@ -1,11 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.domains.posts.PostsRepository;
+import com.example.demo.dto.posts.PostsMainResponseDto;
 import com.example.demo.dto.posts.PostsSaveRequestDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 /**
  * PostsService
@@ -27,5 +31,16 @@ public class PostsService {
     @Transactional
     public Long save(PostsSaveRequestDto dto) {
         return postsRepository.save(dto.toEntity()).getId();
+    }
+
+    /**
+     * 모든 게시글을 ID 역순으로 취득한다
+     * @return ID 역순으로 정렬된 게시글 리스트
+     */
+    @Transactional(readOnly = true) // readOnly는 트랜잭션 범위를 남겨 조회속도가 개선된다
+    public List<PostsMainResponseDto> findAllDesc() {
+        return postsRepository.findAllDesc()
+            .map(PostsMainResponseDto::new)
+            .collect(Collectors.toList());
     }
 }
