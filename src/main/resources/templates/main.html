@@ -20,6 +20,32 @@
                     </button>
                 </div>
             </div>
+
+            <br />
+            <br />
+
+            <div class="row">
+                <div class="col-md">
+                    <table class="table table-horizontal table-bordered">
+                        <thead class="thead-strong">
+                            <tr>
+                                <th>게시글 번호</th>
+                                <th>제목</th>
+                                <th>작성자</th>
+                                <th>최종수정일</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="post : ${posts}">
+                                <td th:text="${post.id}"></td>
+                                <td th:text="${post.title}"></td>
+                                <td th:text="${post.author}"></td>
+                                <td th:text="${post.modifiedDate}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- modal -->
