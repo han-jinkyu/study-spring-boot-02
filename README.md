@@ -22,7 +22,7 @@
 1. 보안 그룹
     - SSH(22)는 `내 IP`로 선택하여 외부 접속 막기 
     - HTTP(80), HTTPS(443)은 사용자 지정 `0.0.0.0/0, ::/0`으로 설정
-1. 키 페어 생성하여 보존
+1. 키 페어 생성하여 보존 (*.pem)
 
 ### Elastic IP (고정 IP)
 1. EC2 페이지 좌측의 `네트워크 및 보안` => `탄력적 IP`
@@ -31,3 +31,28 @@
     - 리소스 유형: 인스턴스
     - 인스턴스: 생성한 인스턴스 연결
     - 프라이빗 IP: 탄력적 IP 설정
+
+### ssh 설정
+1. 인스턴스 작성시에 마지막에 취득한 키 페어 파일(*.pem)의 모드를 변경한다
+    ```bash
+    $ chmod 600 springboot-webservice.pem
+    ```
+   
+1. `~/.ssh`에 들어가서 config 파일을 작성한다
+    ```bash
+    $ vi config
+    ```
+   
+1. config 파일 내용은 다음과 같이 적는다
+    ```text
+    # springboot-webservice
+    Host [연결할 때 쓸 이름]
+         HostName [탄력적 IP]
+         User ec2-user
+         IdentityFile [pem 파일 존재 위치]
+    ```
+   
+1. 저장하고 ssh를 이용해 연결해본다
+    ```bash
+    $ ssh [연결할 때 쓸 이름]
+    ```
