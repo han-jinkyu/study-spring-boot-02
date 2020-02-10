@@ -3,6 +3,7 @@
 [jojoldu님의 블로그](https://jojoldu.tistory.com/250)를 참고하였습니다.
 
 # AWS
+
 ## EC2
 클라우드 상의 가상 컴퓨터 인스턴스를 생성한다
 
@@ -94,7 +95,7 @@
 
 ### RDS 내부 설정 변경
 1. 문자열 변수 확인 (UTF8인지 확인하기 위해)
-    ```SQL
+    ```sql
     SHOW VARIALBES LIKE 'c%';
     ```
    
@@ -118,8 +119,53 @@
     - `재부팅`
 
 1. 파라미터 그룹으로 변경이 안 되는 파라미터는 직접 변경
-    ```SQL
+    ```sql
     ALTER DATABASE webservice
     CHARACTER SET = 'utf8'
     COLLATE = 'utf8_general_ci';
+    ```
+
+## 배포
+EC2에 애플리케이션을 배포한다
+
+### Java 8 설치
+1. Java 8 설치
+    ```bash
+    # JDK는 devel
+    $ sudo yum install -y java-1.8.0-openjdk-devel.x86_64
+    ```
+
+1. Git 설치
+    ```bash
+    $ sudo yum install -y git
+    ```
+   
+1. 프로젝트 클론
+    ```bash
+    $ mkdir app && mkdir app/git
+    $ cd ~/app/git
+    $ git clone [레포지터리 URI]
+    ```
+   
+1. 프로젝트 테스트 수행
+    ```bash
+    # /gradle 폴더가 존재해야 됨...
+    $ ./gradlew test
+    ```
+    순서대로 했다면 테스트 실패!
+    
+### 테스트 관련 수정
+- 테스트를 위한 환경설정 파일 작성 (src/test/resource/application.yml)
+    ```yaml
+    # Test
+    spring:
+      profiles:
+        active: local # 기본 환경 선택
+    
+    # local 환경
+    ---
+    spring:
+      profiles: local
+      jpa:
+        show-sql: true
     ```
