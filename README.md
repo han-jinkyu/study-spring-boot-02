@@ -169,3 +169,10 @@ EC2에 애플리케이션을 배포한다
       jpa:
         show-sql: true
     ```
+
+### 스크립트
+- scripts/deploy.sh를 확인한다
+- 스크립트를 실행하기 위하여 권한을 준다
+    ```bash
+    $ chmod 755 deploy.sh
+    ```
