@@ -1,4 +1,4 @@
-# study-spring-boot-02
+# study-spring-boot-02 [![Build Status](https://travis-ci.com/han-jinkyu/study-spring-boot-02.svg?branch=master)](https://travis-ci.com/han-jinkyu/study-spring-boot-02)
 스프링 부트 공부를 위한 두번째 레포지터리.
 [jojoldu님의 블로그](https://jojoldu.tistory.com/250)를 참고하였습니다.
 
