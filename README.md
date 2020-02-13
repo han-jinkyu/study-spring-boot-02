@@ -286,3 +286,60 @@ EC2와 CodeDeploy를 위한 [역할](https://docs.aws.amazon.com/ko_kr/IAM/lates
     - IAM 역할: `springboot-webservice-EC2CodeDeployRole` (설정한 이름)
 1. `적용` 버튼
 
+### EC2에 CodeDeploy Agent 설치
+1. EC2 인스턴스에 접속
+1. AWS Client 설치
+    ```bash
+    $ sudo yum -y update
+    $ sudo yum install -y aws-cli
+    ```
+1. 적당한 폴더로 이동하여 AWS 설정을 진행
+    ```bash
+    $ cd /home/ec2-user
+    $ sudo aws configure
+    AWS Access Key ID [None]: ###ACCESS_KEY_ID###
+    AWS Secret Access Key [None]: ###SECRET_ACCESS_KEY###
+    Default region name [None]: ap-northeast-1
+    Default output format [None]: json
+    ```
+   
+    - Region name
+        - ap-northeast-2 = 서울, ap-northeast-1 = 도쿄
+
+1. EC2로 CodeDeploy 설치 파일 다운로드
+    ```bash
+    $ aws s3 cp s3://aws-codedeploy-ap-northeast-1/latest/install . --region ap-northeast-1
+    ```
+    
+    - aws: AWS Client
+    - s3: S3 서비스
+    - cp `src` `dest`: COPY 명령어
+
+1. 다운로드된 파일에 권한 추가하고 설치
+    ```bash
+    $ chmod +x ./install
+    $ sudo ./install auto
+    ```
+   
+    - +x: X (Executable) 권한을 준다
+    - 혹시 `sudo ./install auto`가 ruby를 찾는다면 ruby를 설치
+        ```bash
+        $ sudo yum install -y ruby
+        ```
+1. CodeDeploy Agent가 실행 중인지 확인
+    ```bash
+    $ sudo service codedeploy-agent status
+    The AWS CodeDeploy agent is running as PID xxxx
+    ```
+   
+1. CodeDeploy Agent가 EC2 부팅시 자동 실행하게 스크립트 작성 
+    ```bash
+    $ sudo vi /etc/init.d/codedeploy-startup.sh
+    ```
+   
+    ```shell script
+    #!bin/bash
+   
+    echo 'Starting codedeploy-agent'
+    sudo service codedeploy-agent start
+    ```
