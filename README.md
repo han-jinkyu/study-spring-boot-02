@@ -212,3 +212,77 @@ Travis CI를 통해 CI 환경을 구축해본다
     ```
 
 1. 푸시하고 커밋한다
+
+
+## 자동 배포
+AWS Code Deploy를 통해 빌드 결과물을 EC2에 자동 배포한다
+
+### Travis CI용 계정 생성 (IAM)
+1. IAM 페이지 => 엑세스 관리 => 사용자
+1. 상단의 `사용자 추가` 버튼
+1. 세부 정보 설정
+    - 사용자 이름: `springboot-webservice-deploy` (임의 설정)
+    - 엑세스 유형: `프로그래밍 방식 엑세스`
+1. 정책(Policy) 설정
+    - `기존 정책 연결`: 계정에 바로 정책 설정
+    - 설정할 정책 목록
+        - `AmazonS3FullAccess`: S3에 대한 모든 접근 권한
+        - `AWSCodeDeployFullAccess`: Code Deploy에 대한 모든 접근 권한
+1. 태그 설정
+    - 이번엔 설정 안 함
+1. 검토 페이지
+    - 확인하고 `사용자 추가` 버튼
+1. 사용자 추가
+    - `.csv 다운로드` 버튼을 눌러 `엑세스 키 ID`, `비밀 엑세스 키`를 다운로드 받아놓는다
+    
+
+### 빌드 파일 보관소 생성 (S3)
+1. S3 페이지 => `버킷 만들기` 버튼
+1. 이름 및 지역 설정
+    - 버킷 이름: `springboot-webservice-build-deploy` (임의 설정; 고유해야 함)
+    - 리전: `아시아 태평양 (도쿄)` (임의 설정)
+1. `생성` 버튼
+    
+### IAM 역할(Role) 추가
+EC2와 CodeDeploy를 위한 [역할](https://docs.aws.amazon.com/ko_kr/IAM/latest/UserGuide/id_roles_terms-and-concepts.html)을 생성한다
+
+#### 첫번째 역할: CodeDeploy를 위한 EC2 역할
+1. IAM 페이지 => 액세스 관리 => 역할
+1. `역할 만들기` 버튼
+1. 신뢰할 수 있는 유형의 개체 선택
+    - AWS 서비스
+    - 사용 사례 선택: `EC2` => `EC2`
+1. 역할 만들기
+    - `AmazonEC2RoleforAWSCodeDeploy` 선택
+1. 태그 추가
+    - 이번엔 설정 안 함
+1. 검토 페이지
+    - 역할 이름: `springboot-webservice-EC2CodeDeployRole` (임의 설정)
+    - 정책: `AmazonEC2RoleforAWSCodeDeploy`
+1. `역할 만들기` 버튼
+
+#### 두번째 역할: CodeDeploy가 AWS 서비스를 부를 수 있게 허용하는 역할
+1. IAM 페이지 => 액세스 관리 => 역할
+1. `역할 만들기` 버튼
+1. 신뢰할 수 있는 유형의 개체 선택
+    - AWS 서비스
+    - 사용 사례 선택: `CodeDeploy` => `CodeDeploy`
+1. 역할 만들기
+    - `AWSCodeDeployRole` 선택
+1. 태그 추가
+    - 이번엔 설정 안 함
+1. 검토 페이지
+    - 역할 이름: `springboot-webservice-EC2CodeDeployRole` (임의 설정)
+    - 정책: `AmazonEC2RoleforAWSCodeDeploy`
+1. `역할 만들기` 버튼
+    - 역할 이름: `springboot-webservice-CodeDeployRole` (임의 설정)
+    - 정책: `AmazonEC2RoleforAWSCodeDeploy`
+1. `역할 만들기` 버튼
+
+#### EC2에 첫번째 역할 부여
+1. EC2 페이지 => 인스턴스
+1. `작업` => `인스턴스 설정` => `IAM 역할 연결/바꾸기`
+1. IAM 역할 연결/바꾸기
+    - IAM 역할: `springboot-webservice-EC2CodeDeployRole` (설정한 이름)
+1. `적용` 버튼
+
