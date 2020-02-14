@@ -5,12 +5,12 @@ jdk:
 
 branches:
   only:
-  - master
+    - master
 
 cache:
   directories:
-  - "$HOME/.m2/repository"
-  - "$HOME/.gradle"
+    - "$HOME/.m2/repository"
+    - "$HOME/.gradle"
 
 script: "./gradlew clean build"
 
@@ -28,6 +28,7 @@ deploy:
     cleanup: true
     acl: public_read
     local_dir: deploy
+    wait-until-deployed: true
     on:
       repo: han-jinkyu/study-spring-boot-02
       branch: master
@@ -35,6 +36,4 @@ deploy:
 notifications:
   email: false
   slack:
-    rooms:
-      - secure: c5s1cxOAi/3Jj8C5e1YRfTL1McOjuYIeMwzWkwaycPZEkcjIcIgce8dBGNdKTBNWHTFwwZ/6/PfNqc5RT9qK5TjI29H9+ogHuby90BKYdRsC6qtk86Afbd0g3o7BTxN4lKuqkZdQa9u2IgDjDRX8STmSD1cpo/RmaEtpAFtLNt9b6sFtOWYu3YfsCdNhvGZpe4GgeeTcbPN+ocj6G/iRFNtuKBVR2Rcc3rpQHcLWPybN2Qtv6lNmMGEuliOL1m5n1MPK9lukUzSxt6+fGDnieofHmDYKaDnBVA4p+FYW8UpQvig2W2aFq9KmV1xu2v5niq1uPwX5tpvxjVAhKQjvNPEKCV58mXeTV6etIC8APoniXP8Z2c3wSXEW4KarGR0OrAJNV19+VA2lDXmU++bdWYF8l1U34W4vwNE+0HLuU/wwQ2yCD6lQ9wFJ0TK8b/5gXNYrWGctm/paHh9xsDY9vAnPbQcy6zHAaeCCSQI0gkGgn4CCh6G2TNjrgmQUX8eT+0mx+YqIzF8SV+6GS8vs3Zx+IYlyYJyWzfI1CnrDjfiB+JqQld1iUFiVxk+wz80dhc1bM+//kp9xq9FoUcV8uVe4XTEr9dJR479B+k+ZXY2EkSdVVlFGaLxVVgfAY1O506IAwClM/+ymtc5wjJzl/9Eug87LiaR/sxMMaFDK53E=
-    on_success: always
+    secure: MrQ90V4AxUzLiwkNBVRQ2PPNvPsfFpjQMshOdULnEXruQNfo1TWAuclIKxWx9N8JL9bZ8qbDkAw38jZvdCySYp8+jUWzct3PasSatgUgnfqAoMeEZCy7wgxCioYcLIN3ztVCGk+K3ae7ZgG6Aa4gSsctoU185igC7yU4thDuo4SDZKKhFsuJl6RCLEPCSgg04p9MBwaRPysrrso+VNGSKABX8LH2wggC4/fPwTS2nWbFgKTxdQsCEffLf7XW9dL5o1jsBDSRIdD81aLqLqACcP97XaUFH2OecFWj1VUuudRSR9nn6YNFYudUbevcBt8wHAQcV2CXs4lR0JTrffz0+eCbOv/zQtckyidKcKZhEgzzQjjGne1RdiqpbZJLIpAkOjGLkWpppO1k/+czugznMmPH/uAOum2yshv4snmSdGzvE9nb6x7aAyme/V5eY1dlkM095ACGkErq64eJ6zFVOnr2y2Pm/b2IyRe4adVkHZH4VkRNXYxmjniOEgPXthA76bOJYzXEFQqask8Wv19EzZsnz98tsakGtTKhoiLc5U4I84yV3urkEvbxuljXSQVRZB3akj1B6MGOmLsnfH812HBlkaZBWkTJRc3C4mx3BUvh7JSzqngcydEbek68WsNU217xdh5jvUkxvdpuGzfav5csVt9YPV69tl27ZUCrsuM=
