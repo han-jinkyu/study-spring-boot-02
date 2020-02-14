@@ -388,3 +388,61 @@ EC2와 CodeDeploy를 위한 [역할](https://docs.aws.amazon.com/ko_kr/IAM/lates
        local_dir: deploy # before_deploy에서 생성한 폴더명
        ...
     ```
+
+### Travis CI, S3 그리고 CodeDeploy 연결
+CodeDeploy까지 연결하여 EC2로 배포한다
+
+#### 애플리케이션 생성
+1. `CodeDeploy` 페이지 => 좌측 `애플리케이션`
+1. `애플리케이션 생성` 버튼
+1. `애플리케이션 구성`
+    - 애플리케이션 이름: `springboot-webservice` (임의 설정)
+    - 컴퓨팅 플랫폼: `EC2/온프레미스`
+1. `애플리케이션 생성` 버튼
+
+#### 배포 그룹 설정
+1. 생성한 애플리케이션 선택
+1. `배포 그룹` 탭 => `배포 그룹 생성` 버튼
+    - 배포 그룹 이름: `springboot-webservice-group` (임의 설정)
+    - 서비스 역할 입력: 생성해두었던 `CodeDeployRole`
+    - 배포 유형: `현재 위치`
+    - 환경 구성
+        - `Amazon EC2 인스턴스`
+        - 태그
+            - 키: `Name`
+            - 값: `springboot-webservice`
+    - 배포 구성: `CodeDeployDefault.AllAtOnce`
+    - 로드 밸런서: `비활성화` (로드 밸런서 설정이 없기 때문)
+1. `배포 그룹 생성` 버튼
+
+#### EC2상에 S3로부터 다운로드
+1. S3로부터 zip 파일을 다운로드 받아놓을 폴더를 생성한다
+    ```bash
+    $ mkdir -p /home/ec2-user/app/travis/build
+    ```
+1. AWS CodeDeploy를 위한 설정 `appspec.yml` 생성
+    ```yaml
+    version: 0.0   # CodeDeploy의 버전을 뜻함. 0.0을 사용할 것.   
+    os: linux
+    files: 
+     - source: /   # S3 버킷에서 복사할 파일 위치
+       destination: /home/ec2-user/app/travis/build/
+    ```
+1. Travis CI에서 CodeDeploy를 실행하도록 `.travis.yml` 수정
+    ```yaml
+    deploy:
+        ...
+        - provider: codedeploy
+            access_key_id: $AWS_ACCESS_KEY
+            secret_access_key: $AWS_SECRET_KEY
+            bucket: springboot-webservice-build-deploy
+            key: study-spring-boot-02.zip  # S3에 저장된 zip 파일을 EC2로 배포
+            build_type: zip
+            application: springboot-webservice # 콘솔에서 등록한 CodeDeploy 애플리케이션
+            deployment_group: springboot-webservice-group # 콘솔에서 등록한 CodeDeploy 애플리케이션의 배포 그룹
+            region: ap-northeast-1
+            on:
+              repo: han-jinkyu/study-spring-boot-02
+              branch: master
+        ...
+    ```
