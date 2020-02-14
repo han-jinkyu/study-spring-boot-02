@@ -343,3 +343,22 @@ EC2와 CodeDeploy를 위한 [역할](https://docs.aws.amazon.com/ko_kr/IAM/lates
     echo 'Starting codedeploy-agent'
     sudo service codedeploy-agent start
     ```
+
+### Travis CI와 S3 연결
+빌드 결과물을 저장할 수 있게 연결한다
+
+1. `.travis.yml`에 추가한다
+    ```yaml
+    deploy:
+     - provider: s3
+       access_key_id: $AWS_ACCESS_KEY      # Travis CI 상에서 설정
+       secret_access_key: $AWS_SECRET_KEY  # Travis CI 상에서 설정
+       bucket: springboot-webservice-build-deploy  # 보존할 버킷명
+       region: ap-northeast-1  # Tokyo
+       skip_cleanup: true
+       acl: public_read
+       wait-until-deployed: true
+       on:
+         repo: han-jinkyu/study-spring-boot-02 # github repo 이름
+         branch: master
+    ```
