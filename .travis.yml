@@ -18,7 +18,6 @@ before_deploy:
   - zip -r study-spring-boot-02 *
   - mkdir -p deploy
   - mv study-spring-boot-02.zip deploy/study-spring-boot-02.zip
-  - ls -al deploy # 확인용
 
 deploy:
   - provider: s3
@@ -26,6 +25,7 @@ deploy:
     secret_access_key: $AWS_SECRET_KEY
     bucket: springboot-webservice-build-deploy
     region: ap-northeast-1
+    skip_cleanup: true
     acl: public_read
     local_dir: deploy
     on:
