@@ -9,6 +9,10 @@ cache:
   - "$HOME/.m2/repository"
   - "$HOME/.gradle"
 script: "./gradlew clean build"
+before_deploy:
+  - zip -r study-spring-boot-02 *
+  - mkdir -p deploy
+  - mv study-spring-boot-02.zip deploy/study-spring-boot-02.zip
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY
@@ -17,7 +21,7 @@ deploy:
     region: ap-northeast-1
     cleanup: true
     acl: public_read
-    wait-until-deployed: true
+    local_dir: deploy
     on:
       repo: han-jinkyu/study-spring-boot-02
       branch: master
