@@ -357,7 +357,7 @@ EC2와 CodeDeploy를 위한 [역할](https://docs.aws.amazon.com/ko_kr/IAM/lates
        secret_access_key: $AWS_SECRET_KEY  # Travis CI 상에서 설정
        bucket: springboot-webservice-build-deploy  # 보존할 버킷명
        region: ap-northeast-1  # Tokyo
-       cleanup: false  # skip_cleanup은 deprecated
+       # skip_cleanup은 default로 변경됨
        acl: public_read
        on:
          repo: han-jinkyu/study-spring-boot-02 # github repo 이름

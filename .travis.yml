@@ -18,6 +18,7 @@ before_deploy:
   - zip -r study-spring-boot-02 *
   - mkdir -p deploy
   - mv study-spring-boot-02.zip deploy/study-spring-boot-02.zip
+  - ls -al deploy # 확인용
 
 deploy:
   - provider: s3
@@ -27,7 +28,6 @@ deploy:
     region: ap-northeast-1
     acl: public_read
     local_dir: deploy
-    cleanup: false
     on:
       repo: han-jinkyu/study-spring-boot-02
       branch: master
