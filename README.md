@@ -188,7 +188,7 @@ Travis CI를 통해 CI 환경을 구축해본다
 ### 프로젝트 설정
 1. `.travis.yml`을 레포지터리 루트에 작성한다. ([참고](https://docs.travis-ci.com/user/tutorial/))
     ```yaml
-    langauge: java
+    language: java
     jdk:
         - openjdk8
     
@@ -204,11 +204,13 @@ Travis CI를 통해 CI 환경을 구축해본다
           - '$HOME/.gradle'
     
     # 푸시되었을 때 사용될 스크립트
-    scripts: "./gradlew clean build"
+    script: "./gradlew clean build"
     
     # 실행 완료시 알림
     notifications:
-        slack: ##token##
+        slack:
+          rooms:
+            - secure: ##token##
     ```
 
 1. 푸시하고 커밋한다
@@ -361,4 +363,29 @@ EC2와 CodeDeploy를 위한 [역할](https://docs.aws.amazon.com/ko_kr/IAM/lates
        on:
          repo: han-jinkyu/study-spring-boot-02 # github repo 이름
          branch: master
+    ```
+
+    - 다음과 같은 메시지가 로그에서 나오면서 실패하면 ACL(Access Control List) 설정을 바꿔야 하는 경우가 있다
+        ```
+        Oops, It looks like you tried to write to a bucket that isn't yours or doesn't exist yet. Please create the bucket before trying to write to it.
+        ```
+        
+        1. 생성한 버킷 클릭
+        1. `권한` 탭
+        1. `퍼블릭 액세스 차단` 설정
+        1. `새 ACL(액세스 제어 목록)을 통해 부여된 버킷 및 객체에 대한 퍼블릭 액세스 차단`를 비활성화
+        
+1. 빌드된 파일을 압축하여 보낼 수 있게 `.travis.yml`을 더 수정한다
+    ```yaml
+    ...
+    before_deploy:
+     - zip -r study-spring-boot-02 * # github repo명을 쓴다
+     - mkdir -p deploy
+     - mv study-spring-boot-02.zip deploy/study-spring-boot-02.zip
+   
+    deploy:
+     - provider: s3
+       ...
+       local_dir: deploy # before_deploy에서 생성한 폴더명
+       ...
     ```
