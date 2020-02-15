@@ -36,7 +36,7 @@ deploy:
     secret_access_key: $AWS_SECRET_KEY
     bucket: springboot-webservice-build-deploy
     key: study-spring-boot-02.zip
-    build_type: zip
+    bundle_type: zip
     application: springboot-webservice
     deployment_group: springboot-webservice-group
     region: ap-northeast-1
