@@ -6,5 +6,5 @@ files:
 
 hooks:
   AfterInstall:
-    - location: scripts/execute-deploy.sh
+    - location: execute-deploy.sh
       timeout: 180
