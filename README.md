@@ -446,3 +446,66 @@ CodeDeploy까지 연결하여 EC2로 배포한다
               branch: master
         ...
     ```
+1. Commit하고 Push하여 성공하면 `app/travis/build` 폴더에 애플리케이션 확인 가능
+
+#### CodeDeploy를 통한 배포 스크립트 실행
+1. jar 파일을 모아둘 폴더 생성
+    ```bash
+    $ mkdir -p /home/ec2-user/app/travis/jar
+    ```
+   
+1. `applictaion.jar`를 실행할 스크립트 작성
+    ```bash
+    $ vi /home/ec2-user/app/travis/deploy.sh
+    ```
+   
+    ```shell script
+    #!/bin/bash
+    
+    REPOSITORY=/home/ec2-user/app/travis
+    
+    echo "> 현재 구동 중인 애플리케이션 pid 확인"
+    
+    CURRENT_PID=$(pgrep -f demo)
+    
+    echo "$CURRENT_PID"
+    
+    if [ -z $CURRENT_PID ]; then
+        echo "> 현재 구동 중인 애플리케이션이 존재하지 않습니다"
+    else
+        echo "> kill -15 $CURRENT_PID"
+        kill -15 $CURRENT_PID
+        sleep 5
+    fi
+    
+    echo "> 새 애플리케이션 배포"
+    
+    echo "> build 파일 복사"
+    
+    cp $REPOSITORY/build/build/libs/*.jar $REPOSITORY/jar/
+    
+    JAR_NAME=$(ls $REPOSITORY/jar/ | grep 'demo' | tail -n 1)
+    
+    echo "> JAR NAME: $JAR_NAME"
+    
+    nohup java -jar $REPOSITORY/jar/$JAR_NAME &
+    ```
+
+1. `appspec.yml`을 갱신하여 스크립트를 실행하도록 한다
+    ```yaml
+    files:
+      ...
+   
+    hooks:
+      AfterInstall:  # 배포 후 아래 명령어 실행
+        - location: scripts/execute-deploy.sh  # 코드 내부의 파일
+          timeout: 180
+    ```
+   
+1. `appspec.yml`에 작성한 `execute-deploy.sh`를 작성한다
+    ```shell script
+    #!/bin/bash
+    
+    # 백그라운드(&) 실행 뒤 로그 등을 남기지 않도록(> /dev/null) 한다
+    /home/ec2-user/app/travis/deploy.sh > /dev/null 2> /dev/null < /dev/null &
+    ```
