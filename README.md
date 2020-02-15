@@ -507,5 +507,6 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     #!/bin/bash
     
     # 백그라운드(&) 실행 뒤 로그 등을 남기지 않도록(> /dev/null) 한다
-    /home/ec2-user/app/travis/deploy.sh > /dev/null 2> /dev/null < /dev/null &
+    sh /home/ec2-user/app/travis/deploy.sh > /dev/null 2> /dev/null < /dev/null &
     ```
+    - `sh` 커맨드를 안 넣으면 `Permission denied` 당하는 경우가 존재하는 걸로 생각된다
