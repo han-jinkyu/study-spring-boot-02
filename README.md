@@ -510,3 +510,65 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     sh /home/ec2-user/app/travis/deploy.sh > /dev/null 2> /dev/null < /dev/null &
     ```
     - `sh` 커맨드를 안 넣으면 `Permission denied` 당하는 경우가 존재하는 걸로 생각된다
+
+## 무중단 배포
+상기 자동배포는 서비스가 잠시 멈추는 점과 배포시 문제가 발생하면 롤백하기 어려우므로 무중단 배포를 통하여 중단하지 않고 배포를 진행해본다.
+
+### Nginx 설치 및 실행
+1. yum을 이용하여 설치
+    ```bash
+    $ sudo yum install -y nginx
+    ```
+   
+    - nginx를 못 찾고 에러가 난다면 에러문의 이 명령어를 실행한다
+        ```bash
+        $ sudo amazon-linux-extras install nginx1        
+        ```
+   
+1. Nginx를 실행한다
+    ```bash
+    $ sudo service nginx start
+   
+    # nginx 프로세스를 확인한다
+    $ ps -ef | grep nginx
+    ```
+
+1. AWS 콘솔에서 EC2 인스턴스의 `퍼블릭 DNS (IPv4)`를 복사하여 브라우저에서 실행해본다
+    - nginx 페이지가 뜬다면 성공
+    
+### 리버스 프록시 (Reverse Proxy) 설정
+1. nginx 설정 파일을 연다
+    ```bash
+    $ sudo vi /etc/nginx/nginx.conf
+    ```
+   
+1. 다음을 설정한다
+    ```
+    [...]
+   
+    http {
+        [...]
+   
+        server {
+            [...]
+   
+            location / {
+                proxy_pass http://localhost:8080;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header Host $http_host;
+            }
+        }
+   
+        [...]
+    }
+    ```
+
+    - proxy_pass: 리퀘스트를 `http://localhost:8080`으로 전달한다
+    - proxy_set_header [HEADER] [VARIABLE]: 프록시로(현재는 nginx)부터 보내는 요청의 HEADER에 VARIABLE를 설정한다
+    
+1. `:wq`로 저장하고 nginx를 재시작한다
+    ```bash
+    $ sudo service nginx restart 
+    ```
+
