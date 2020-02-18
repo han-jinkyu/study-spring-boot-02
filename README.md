@@ -572,3 +572,46 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     $ sudo service nginx restart 
     ```
 
+### Profile 생성
+환경별로 사용할 Profile을 생성한다
+
+1. 외부에 두고 불러들일 `/app/config/springboot-webservice/real-application.yml` 파일을 생성한다 (파일명 임의 설정 가능)
+    ```yaml
+    ---
+    spring:
+      profiles: set1
+    server:
+      port: 8081
+    
+    ---
+    spring:
+      profiles: set2
+    server:
+      port: 8082
+    ```
+
+1. 애플리케이션의 main이 존재하는 클래스를 수정한다
+    ```java
+    @EnableJpaAuditing
+    @SpringBootApplication
+    public class DemoApplication {
+    
+        public static final String APPLICATION_LOCATIONS = "spring.config.location=" +
+            "classpath:application.yml," +
+            "/app/config/springboot-webservice/real-application.yml";
+    
+        /**
+         * Main
+         * @param args arguments
+         */
+        public static void main(String[] args) {
+            new SpringApplicationBuilder(DemoApplication.class)
+                .properties(APPLICATION_LOCATIONS)
+                .run(args);
+        }
+    }
+    ```
+   
+    - APPLICATION_LOCATIONS: `application.yml`과 방금 생성한 `real-application.yml`의 경로를 써놓은 상수
+    - SpringApplicationBuilder를 통해 properties를 불러 사용한다
+
