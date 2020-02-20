@@ -648,8 +648,12 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     JAR_NAME=$(basename $BUILD_PATH)
     echo "> build 파일명: $JAR_NAME"
    
-    echo "> 파일 복사"
+    echo "> 기존 파일 삭제"
+    APPLICATION_NAME=demo
     DEPLOY_PATH=$BASE_PATH/jar/
+    ls $DEPLOY_PATH | grep $APPLICATION_NAME | xargs rm
+   
+    echo "> 파일 복사"
     cp $BUILD_PATH $DEPLOY_PATH
    
     echo "> 현재 구동중인 Set 확인"
