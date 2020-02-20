@@ -833,3 +833,14 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     $ curl -s http://localhost/profile
     set2    # set2가 나오면 성공
     ```
+   
+1. `deploy.sh` 스크립트 맨 끝에 `switch.sh`를 실행하도록 추가
+    ```bash
+    $ vi /home/ec2-user/app/nonstop/deploy.sh
+    ```
+
+    ```shell script
+    echo "> 스위칭"
+    sleep 10
+    sh /home/ec2-user/app/nonstop/switch.sh
+    ```
