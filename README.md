@@ -777,3 +777,59 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     $ curl -s localhost/profile
     ```
 
+### Nginx 스크립트 작성
+배포 시점에 자동으로 profile을 변경하도록 한다
+
+1. 스크립트를 생성한다
+    ```bash
+    $ vi /home/ec2-user/app/nonstop/switch.sh
+    ```
+   
+    ```shell script
+    #!/bin/bash
+    
+    echo "> 현재 구동중인 Port 확인"
+    CURRENT_PROFILE=$(curl -s http://localhost/profile)
+    
+    if [ $CURRENT_PROFILE == set1 ]
+    then
+      IDLE_PORT=8082
+    elif [ $CURRENT_PROFILE == set2 ]
+    then
+      IDLE_PORT=8081
+    else
+      echo "> 일치하는 Port가 없습니다. Profile: $CURRENT_PROFILE"
+      echo "> 8081을 할당합니다"
+      IDLE_PORT=8081
+    fi
+    
+    echo "> 전환할 포트: $IDLE_PORT"
+    echo "> Port 전환"
+    echo "set \$service_url http://127.0.0.1:${IDLE_PORT};" | sudo tee /etc/nginx/conf.d/service-url.inc
+    
+    PROXY_PORT=$(curl -s http://localhost/profile)
+    echo "> Nginx 현재 Proxy Port: $PROXY_PORT"
+    
+    echo "> Nginx 재시작"
+    sudo service nginx reload
+    ```
+
+    - 현재 구동중인 프로파일을 확인하여 쉬고 있는 포트를 설정하고 전환한다
+    - `tee`는 화면 출력과 동시에 파일에 쓰는 커맨드
+    - `service nginx reload`를 통해 설정만 다시 불러온다 (`restart`는 프로그램 재시작)
+
+1. `profile=set2`를 실행한다
+    ```bash
+    $ sh /home/ec2-user/app/nonstop/deploy.sh
+    ```
+   
+1. 생성한 `switch.sh` 스크립트를 실행하여 본다
+    ```bash
+    $ sh /home/ec2-user/app/nonstop/switch.sh
+    ```
+   
+1. 잘 구동되었는지 확인하여 본다
+    ```bash
+    $ curl -s http://localhost/profile
+    set2    # set2가 나오면 성공
+    ```
