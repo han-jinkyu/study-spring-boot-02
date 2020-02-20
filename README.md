@@ -846,20 +846,25 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     ```
 
 ### 실제 배포 적용
-기존에 `/travis`로 적용되어 있는 파일을 전부 바꾼다
-
-- `execute-deploy.sh`
-    ```shell script
-    #!/bin/bash
-    
-    sh /home/ec2-user/app/nonstop/deploy.sh > /dev/null 2> /dev/null < /dev/null &
+1. 기존 빌드 삭제
+    ```bash
+    $ rm ~/app/nonstop/springboot-webservice/build/libs/*.jar
     ```
 
-- `appspec.yml`
-    ```yaml
-    ...
-    files:
-      - source: /
-        destination: /home/ec2-user/app/nonstop/build/
-    ...  
-    ```  
+1. 기존에 `/travis`로 적용되어 있는 파일을 전부 바꾼다
+    
+    - `execute-deploy.sh`
+        ```shell script
+        #!/bin/bash
+        
+        sh /home/ec2-user/app/nonstop/deploy.sh > /dev/null 2> /dev/null < /dev/null &
+        ```
+    
+    - `appspec.yml`
+        ```yaml
+        ...
+        files:
+          - source: /
+            destination: /home/ec2-user/app/nonstop/build/
+        ...  
+        ```  
