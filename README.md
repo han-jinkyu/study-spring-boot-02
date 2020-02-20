@@ -818,6 +818,11 @@ CodeDeploy까지 연결하여 EC2로 배포한다
     - `tee`는 화면 출력과 동시에 파일에 쓰는 커맨드
     - `service nginx reload`를 통해 설정만 다시 불러온다 (`restart`는 프로그램 재시작)
 
+1. `switch.sh`에 실행권한을 준다
+    ```bash
+    $ sudo chmod +x ~/app/nonstop/switch.sh
+    ```
+
 1. `profile=set2`를 실행한다
     ```bash
     $ sh /home/ec2-user/app/nonstop/deploy.sh
