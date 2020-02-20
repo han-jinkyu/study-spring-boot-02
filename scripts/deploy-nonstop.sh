@@ -7,7 +7,7 @@ echo "> build 파일명: $JAR_NAME"
 
 echo "> 파일 복사"
 DEPLOY_PATH=$BASE_PATH/jar/
-cp $BUILD_PATH $DEPLOY_PATH
+sudo cp $BUILD_PATH $DEPLOY_PATH
 
 echo "> 현재 구동중인 Set 확인"
 CURRENT_PROFILE=$(curl -s http://localhost/profile)
@@ -43,7 +43,7 @@ then
   echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다"
 else
   echo "> kill -15 $IDLE_PID"
-  kill -15 $IDLE_PID
+  sudo kill -15 $IDLE_PID
   sleep 5
 fi
 
