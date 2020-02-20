@@ -870,6 +870,8 @@ CodeDeploy까지 연결하여 EC2로 배포한다
         ...
         files:
           - source: /
-            destination: /home/ec2-user/app/nonstop/build/
+            destination: /home/ec2-user/app/nonstop/springboot-webservice/
         ...  
-        ```  
+        ```
+        
+        - `nonstop/springboot-webservice/`인 것을 주의하자
