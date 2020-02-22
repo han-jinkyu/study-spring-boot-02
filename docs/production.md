@@ -123,6 +123,9 @@ dependencies {
     # 그 이외 설정...
     ```
    
+    - 혹시 SQL이 Syntax 에러를 내며 터지면 주석 처리.
+        - engine=InnoDB에서 터지는 것으로 추정
+   
 1. 위에서 나온 SQL을 운영DB에 실행한다 
     ```sql
     create table posts (
