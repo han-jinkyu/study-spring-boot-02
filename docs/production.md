@@ -75,5 +75,65 @@ dependencies {
       port: 8082
     ```
    
+### 운영DB에 테이블 만들기
+이제까지 한 설정을 로컬에서 그대로 실행하면 `java.sql.SQLException: Table 'webservice.posts' doesn't exist`라는 에러가 나올 것이다. 운영DB에 테이블을 생성하여 본다.
+
+1. `src/test/resources/application.yml`을 수정한다
+    ```yaml
+    # Test
+    spring:
+      profiles:
+        active: local   # 기본 환경 선택
+      jpa:
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    
+    # local 환경
+    ---
+    spring:
+      profiles: local
+      jpa:
+        show-sql: true
+    ```
+   
+    - dialect는 [링크](https://www.mkyong.com/hibernate/hibernate-dialect-collection/)를 참조
+
+1. `WebControllerTest`를 실행하여 테스트 중에 나오는 로그 가운데서 SQL을 확인한다
+    ```text
+    [...]
+    2020-02-22 17:46:16.515  INFO 59352 --- [    Test worker] o.hibernate.annotations.common.Version   : HCANN000001: Hibernate Commons Annotations {5.1.0.Final}
+    2020-02-22 17:46:16.617  INFO 59352 --- [    Test worker] org.hibernate.dialect.Dialect            : HHH000400: Using dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    Hibernate: drop table if exists posts
+    Hibernate: create table posts (id bigint not null auto_increment, created_date datetime, modified_date datetime, author varchar(255), content TEXT not null, title varchar(500) not null, primary key (id)) engine=InnoDB
+    2020-02-22 17:46:17.198  WARN 59352 --- [    Test worker] o.h.t.s.i.ExceptionHandlerLoggedImpl     : GenerationTarget encountered exception accepting command : Error executing DDL "create table posts (id bigint not null auto_increment, created_date datetime, modified_date datetime, author varchar(255), content TEXT not null, title varchar(500) not null, primary key (id)) engine=InnoDB" via JDBC Statement
+    [...]
+    ``` 
+   
+1. 나오는 걸 확인했으므로 테스트가 아닌 경우에도 사용하기 위해 `src/main/resources/application.yml`에도 같은 설정 추가
+    ```yaml
+    spring:
+      profiles:
+        active: local   # 기본 환경 선택
+      jpa:
+        properties:
+          hibernate:
+            dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    
+    # 그 이외 설정...
+    ```
+   
+1. 위에서 나온 SQL을 운영DB에 실행한다 
+    ```sql
+    create table posts (
+        id bigint not null auto_increment, 
+        created_date datetime, 
+        modified_date datetime, 
+        author varchar(255), 
+        content TEXT not null, 
+        title varchar(500) not null, 
+        primary key (id)) engine=InnoDB
+    ```
+
 ---
 [Home](../README.md)
